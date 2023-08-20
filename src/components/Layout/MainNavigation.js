@@ -1,17 +1,10 @@
 import { Link } from "react-router-dom";
-
 import classes from "./MainNavigation.module.css";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import AuthContext from "../../Store/auth-context";
 
 const MainNavigation = () => {
   const authCtx = useContext(AuthContext);
-
-  useEffect(() => {
-    {
-      console.log(authCtx);
-    }
-  }, [authCtx.isLoggedIn]);
 
   return (
     <header className={classes.header}>

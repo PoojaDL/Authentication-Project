@@ -47,13 +47,13 @@ const AuthForm = () => {
           return res.json();
         } else {
           return res.json().then((data) => {
-            let errorMessage = data.error;
+            let errorMessage = data.error.message;
             throw new Error(errorMessage);
           });
         }
       })
       .then((data) => authCtx.login(data.idToken))
-      .catch((error) => alert(error.message));
+      .catch((error) => alert(error));
   };
 
   return (
