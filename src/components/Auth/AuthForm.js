@@ -19,34 +19,40 @@ const AuthForm = () => {
     const emailEntered = emailInput.current.value;
     const passwordEntered = passwordInput.current.value;
 
+    setLoad(true);
+    let url;
     if (isLogin) {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyC8wHsJTe8rHFeXPPHA5u0R9NWkWsuix3s";
     } else {
-      setLoad(true);
-      fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyC8wHsJTe8rHFeXPPHA5u0R9NWkWsuix3s",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: emailEntered,
-            password: passwordEntered,
-            returnSecureToken: true,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      ).then((res) => {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyC8wHsJTe8rHFeXPPHA5u0R9NWkWsuix3s";
+    }
+
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        email: emailEntered,
+        password: passwordEntered,
+        returnSecureToken: true,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
         setLoad(false);
         if (res.ok) {
-          console.log(res);
+          return res.json();
         } else {
           return res.json().then((data) => {
-            // setError(true);
-            alert(data.error.message);
+            let errorMessage = data.error;
+            throw new Error(errorMessage);
           });
         }
-      });
-    }
+      })
+      .then((data) => console.log(data))
+      .catch((error) => alert(error.message));
   };
 
   return (
@@ -62,8 +68,12 @@ const AuthForm = () => {
           <input type="password" id="password" required ref={passwordInput} />
         </div>
         <div className={classes.actions}>
-          {load && <p>Sending request</p>}
-          <button>{isLogin ? "Login" : "Create account"}</button>
+          {load ? (
+            <p style={{ color: "white" }}>Sending request...</p>
+          ) : (
+            <button>{isLogin ? "Login" : "Create account"}</button>
+          )}
+
           <button
             type="button"
             className={classes.toggle}
